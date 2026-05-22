@@ -1,0 +1,6 @@
+[tools]
+java = "temurin-25"
+
+[env]
+ANTHROPIC_BETA = "managed-agents-2026-04-01"
+_.file = ".env"
