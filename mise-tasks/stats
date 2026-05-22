@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+#MISE description="Step 1: check the work-queue stats for $ENV_ID (uses org API_KEY)"
+# docs: https://platform.claude.com/docs/en/api/beta/environments/work#stats
+set -euo pipefail
+set -x
+
+curl -sS "https://api.anthropic.com/v1/environments/$ENV_ID/work/stats" \
+  -H "x-api-key: $API_KEY" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "anthropic-beta: $ANTHROPIC_BETA" \
+  | jq

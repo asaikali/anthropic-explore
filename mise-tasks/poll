@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+#MISE description="Step 3: long-poll the work queue (GET) using ENV_KEY"
+#USAGE arg "[worker_id]" default="laptop-bash-worker"
+#USAGE arg "[block_ms]"  default="900"
+# docs: https://platform.claude.com/docs/en/api/beta/environments/work#poll
+# Note: poll is GET; worker id goes in Anthropic-Worker-ID header.
+# block_ms must be 1-999. Server returns immediately if no work and block_ms omitted.
+set -euo pipefail
+
+worker_id="${usage_worker_id:-${1:-laptop-bash-worker}}"
+block_ms="${usage_block_ms:-${2:-900}}"
+
+set -x
+curl -sS "https://api.anthropic.com/v1/environments/$ENV_ID/work/poll?block_ms=$block_ms" \
+  -H "x-api-key: $ENV_KEY" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "anthropic-beta: $ANTHROPIC_BETA" \
+  -H "Anthropic-Worker-ID: $worker_id" \
+  | jq

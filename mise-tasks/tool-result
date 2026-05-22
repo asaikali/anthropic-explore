@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+#MISE description="Step 6: send a user.tool_result event back into a session"
+#USAGE arg "<session_id>"
+#USAGE arg "<tool_use_id>"
+#USAGE arg "<text>"
+#USAGE flag "--error" help="send is_error: true"
+# docs: https://platform.claude.com/docs/en/api/beta/sessions/events#send-events
+set -euo pipefail
+
+session_id="${usage_session_id:-${1:?session id required}}"
+tool_use_id="${usage_tool_use_id:-${2:?tool_use_id required}}"
+text="${usage_text:-${3:?result text required}}"
+is_error="${usage_error:-false}"
+
+set -x
+jq -n \
+  --arg id "$tool_use_id" \
+  --arg text "$text" \
+  --argjson is_error "$is_error" \
+  '{
+    events: [{
+      type: "user.tool_result",
+      tool_use_id: $id,
+      content: [{type: "text", text: $text}],
+      is_error: $is_error
+    }]
+  }' \
+  | curl -sS -X POST "https://api.anthropic.com/v1/sessions/$session_id/events" \
+      -H "x-api-key: $ENV_KEY" \
+      -H "anthropic-version: 2023-06-01" \
+      -H "anthropic-beta: $ANTHROPIC_BETA" \
+      -H "content-type: application/json" \
+      -d @- \
+  | jq

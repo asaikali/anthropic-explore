@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+#MISE description="Step 7: stop an in-flight work item (graceful unless --force)"
+#USAGE arg "<work_id>"
+#USAGE arg "[force]" default="true"
+# docs: https://platform.claude.com/docs/en/api/beta/environments/work#stop
+set -euo pipefail
+
+work_id="${usage_work_id:-${1:?work id required}}"
+force="${usage_force:-${2:-true}}"
+
+set -x
+curl -sS -X POST "https://api.anthropic.com/v1/environments/$ENV_ID/work/$work_id/stop" \
+  -H "x-api-key: $ENV_KEY" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "anthropic-beta: $ANTHROPIC_BETA" \
+  -H "content-type: application/json" \
+  -d "{\"force\": $force}" \
+  | jq

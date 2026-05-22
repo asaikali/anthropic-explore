@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+#MISE description="List events for a session (GET, paginated)"
+#USAGE arg "<session_id>"
+#USAGE arg "[order]" default="asc"
+#USAGE arg "[limit]" default="50"
+#USAGE arg "[types]" help="comma-separated event types e.g. agent.tool_use,agent.message"
+# docs: https://platform.claude.com/docs/en/api/beta/sessions/events#list-events
+set -euo pipefail
+
+session_id="${usage_session_id:-${1:?session id required}}"
+order="${usage_order:-${2:-asc}}"
+limit="${usage_limit:-${3:-50}}"
+types="${usage_types:-${4:-}}"
+
+qs="order=$order&limit=$limit"
+if [[ -n "$types" ]]; then
+  # types is repeated query param: types=a&types=b
+  IFS=',' read -ra arr <<< "$types"
+  for t in "${arr[@]}"; do
+    qs="$qs&types=$t"
+  done
+fi
+
+set -x
+curl -sS "https://api.anthropic.com/v1/sessions/$session_id/events?$qs" \
+  -H "x-api-key: $ENV_KEY" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "anthropic-beta: $ANTHROPIC_BETA" \
+  | jq

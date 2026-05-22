@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+#MISE description="Show that the env vars needed by the curl tasks are set"
+set -euo pipefail
+
+ok=1
+for var in ANTHROPIC_BETA ENV_ID ENV_KEY API_KEY; do
+  val="${!var:-}"
+  if [[ -z "$val" ]]; then
+    printf '%-7s %s\n' "MISSING" "$var"
+    ok=0
+    continue
+  fi
+  case "$var" in
+    ANTHROPIC_BETA|ENV_ID) printf '%-7s %s = %s\n' "SET" "$var" "$val" ;;
+    *)                     printf '%-7s %s = %s...\n' "SET" "$var" "${val:0:12}" ;;
+  esac
+done
+
+if [[ $ok -ne 1 ]]; then
+  echo
+  echo "Fill in .env (see .env.example) — mise will load it via mise.toml's _.file."
+  exit 1
+fi
