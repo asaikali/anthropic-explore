@@ -8,7 +8,7 @@ work_id="${usage_work_id:-${1:?work id required}}"
 
 set -x
 curl -sS -X POST "https://api.anthropic.com/v1/environments/$ENV_ID/work/$work_id/ack" \
-  -H "x-api-key: $ENV_KEY" \
+  -H "Authorization: Bearer $ENV_KEY" \
   -H "anthropic-version: 2023-06-01" \
   -H "anthropic-beta: $ANTHROPIC_BETA" \
   | jq

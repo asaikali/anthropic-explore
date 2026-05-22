@@ -12,7 +12,7 @@ block_ms="${usage_block_ms:-${2:-900}}"
 
 set -x
 curl -sS "https://api.anthropic.com/v1/environments/$ENV_ID/work/poll?block_ms=$block_ms" \
-  -H "x-api-key: $ENV_KEY" \
+  -H "Authorization: Bearer $ENV_KEY" \
   -H "anthropic-version: 2023-06-01" \
   -H "anthropic-beta: $ANTHROPIC_BETA" \
   -H "Anthropic-Worker-ID: $worker_id" \

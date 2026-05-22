@@ -14,7 +14,7 @@ session_id="${usage_session_id:-${1:?session id required}}"
 
 set -x
 curl -N -sS "https://api.anthropic.com/v1/sessions/$session_id/events" \
-  -H "x-api-key: $ENV_KEY" \
+  -H "Authorization: Bearer $ENV_KEY" \
   -H "anthropic-version: 2023-06-01" \
   -H "anthropic-beta: $ANTHROPIC_BETA" \
   -H "Accept: text/event-stream"
